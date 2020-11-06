@@ -1,8 +1,10 @@
 package com.servicio.producto.controlador;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +21,27 @@ public class ProductoControlador {
 	@Autowired
 	ProductoServicio servicio;
 	
+	@Autowired
+	private Environment env;
+	
 	@GetMapping("/listado-producto")
 	public ResponseEntity<List<Producto>> listadoProductos()
 	{		 
-		return (!servicio.listaProducto().isEmpty())? ResponseEntity.ok(servicio.listaProducto()):ResponseEntity.noContent().build();  
+		List<Producto> productos= servicio.listaProducto().stream().map(p ->{
+			p.setPort(Integer.parseInt(env.getProperty("local.server.port")));
+			return p;
+		}).collect(Collectors.toList());
+		
+		if (!productos.isEmpty())
+		{
+			 System.out.println("Tiene productos "+ productos);
+			return ResponseEntity.ok(productos);
+		  
+		}
+		
+		System.out.println("NOoo Tiene productos "+ productos);
+		return ResponseEntity.noContent().build();  
+		
 	}
 	
 	@GetMapping("/producto/{id}")

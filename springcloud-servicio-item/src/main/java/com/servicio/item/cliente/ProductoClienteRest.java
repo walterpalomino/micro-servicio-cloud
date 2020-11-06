@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.servicio.item.modelo.Producto;
 
 
-@FeignClient(name = "servicio-producto", url = "localhost:8081")
+@FeignClient(name = "servicio-productos")
 public interface ProductoClienteRest {
 	
 	
